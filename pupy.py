@@ -43,6 +43,10 @@ def compute_sha1(input_file):
     return hasher.hexdigest()
 
 def add_to_store(input_file):
+    if not os.path.exists(OUTPUT_PATH):
+        print('%s does not exist, creating...' % OUTPUT_PATH)
+        os.makedirs(OUTPUT_PATH)
+
     orig_sha1 = compute_sha1(input_file)
     print('Original SHA1 %s' %  orig_sha1)
     reg = registry.Registry(OUTPUT_PATH) 
@@ -57,8 +61,8 @@ def add_to_store(input_file):
         return
 
     print('Storing file %s' % input_file)
-    stored_filename = STORED_FILE_PATTERN % input_file
-    stored_file = os.path.join(OUTPUT_PATH, stored_filename)
+    stored_filename = STORED_FILE_PATTERN % os.path.basename(input_file)
+    stored_file = os.path.join(OUTPUT_PATH, os.path.basename(stored_filename))
     compress(input_file, stored_file)
     stored_sha1 = compute_sha1(stored_file)
     print('Stored SHA1 %s' % stored_sha1)
